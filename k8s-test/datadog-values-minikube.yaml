@@ -1,0 +1,31 @@
+datadog:
+  site: datadoghq.eu
+  
+  kubelet:
+    tlsVerify: false
+
+  apm:
+    portEnabled: true
+    socketEnabled: false 
+    hostSocketPath: null
+
+  logs:
+    enabled: true
+    containerCollectAll: true
+
+  processAgent:
+    enabled: true
+
+clusterAgent:
+  enabled: true
+  replicas: 1
+  admissionController:
+    enabled: true
+    mutateUnlabelled: true
+    # ÖNEMLİ: Admission Controller'a soket yerine servis kullanmasını söylüyoruz
+    agentCommunicationMode: service 
+
+agents:
+  enabled: true
+  # Minikube için HostNetwork kapatalım
+  useHostNetwork: false 

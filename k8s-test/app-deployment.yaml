@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+  namespace: datadog-apps
+  labels:
+    app: nodejs-app
+    tags.datadoghq.com/env: "production"
+    tags.datadoghq.com/service: "dxhero-node-app"
+    tags.datadoghq.com/version: "1.0.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+        tags.datadoghq.com/env: "production"
+        tags.datadoghq.com/service: "dxhero-node-app"
+        tags.datadoghq.com/version: "1.0.0"
+        # Enables Datadog Admission Controller to inject APM libraries
+        admission.datadoghq.com/enabled: "true"
+      annotations:
+        # Specifies the library version to inject
+        admission.datadoghq.com/js-lib.version: "latest"
+    spec:
+      containers:
+      - name: nodejs-app
+        # We use v2 image which has dd-trace installed manually as a fallback/guarantee.
+        # In a pure Single Step APM setup, we would use a clean image (v3-pure).
+        image: 715841344657.dkr.ecr.eu-central-1.amazonaws.com/dxhero-node-app:v2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        # These variables are technically redundant if Admission Controller works perfectly,
+        # but they ensure the app works even if injection fails (Belt and Suspenders approach).
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_ENV
+          value: "production"
+        - name: DD_SERVICE
+          value: "dxhero-node-app"
+        - name: DD_VERSION
+          value: "1.0.0"
+        - name: DD_LOGS_INJECTION
+          value: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-app
+  namespace: datadog-apps
+spec:
+  selector:
+    app: nodejs-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer

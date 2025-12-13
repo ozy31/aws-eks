@@ -1,4 +1,4 @@
-// Datadog Tracer (En üstte olmalı!)
+// Datadog Tracer (Must be at the top!)
 const tracer = require('dd-trace').init({
   logInjection: true,
   runtimeMetrics: true
@@ -37,4 +37,3 @@ app.get('/slow', (req, res) => {
 app.listen(port, () => {
   log(`App running on http://localhost:${port}`);
 });
-

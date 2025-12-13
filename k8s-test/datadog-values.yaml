@@ -1,0 +1,35 @@
+datadog:
+  # The API Key will be provided using --set during apply
+  site: datadoghq.eu
+
+  apm:
+    portEnabled: true
+    # Single Step APM (Admission Controller) uses Unix Socket by default for better performance.
+    # Enabling this ensures the injected library can find the socket.
+    socketEnabled: true 
+    hostSocketPath: /var/run/datadog/apm.socket
+
+  # To avoid "Conflicting socket host path" error, we ensure DogStatsD uses a compatible path configuration
+  dogstatsd:
+    useSocketVolume: true
+    socketPath: /var/run/datadog/dsd.socket
+    hostSocketPath: /var/run/datadog/dsd.socket
+
+  logs:
+    enabled: true
+    containerCollectAll: true
+
+  processAgent:
+    enabled: true
+
+clusterAgent:
+  enabled: true
+  replicas: 2
+  admissionController:
+    enabled: true
+    mutateUnlabelled: true # Mutates pods even without specific labels if configured, but we use labels.
+
+agents:
+  enabled: true
+  # Using HostNetwork allows the Agent to see the true client IPs and simpler networking.
+  useHostNetwork: true 
