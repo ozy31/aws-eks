@@ -9,32 +9,32 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-// Basit loglama fonksiyonu
+// Simple logging function
 const log = (msg) => console.log(`[${new Date().toISOString()}] ${msg}`);
 
 app.get('/', (req, res) => {
-  log('Ana sayfaya istek geldi');
+  log('Home page accessed');
   res.send('Hello from Datadog Node.js Demo! 🐶');
 });
 
-// Hata simülasyonu
+// Error simulation
 app.get('/error', (req, res) => {
-  log('Hata endpointi çağrıldı!');
-  throw new Error('Bu bir test hatasıdır! Datadog APM bunu yakalamalı.');
+  log('Error endpoint called!');
+  throw new Error('This is a test error! Datadog APM should catch this.');
 });
 
-// Yavaş işlem simülasyonu
+// Slow request simulation
 app.get('/slow', (req, res) => {
-  const waitTime = Math.random() * 2000 + 500; // 0.5 - 2.5 sn arası
-  log(`Yavaş işlem başlatıldı, ${Math.floor(waitTime)}ms sürecek...`);
+  const waitTime = Math.random() * 2000 + 500; // between 0.5 - 2.5 sec
+  log(`Slow operation started, will take ${Math.floor(waitTime)}ms...`);
   
   setTimeout(() => {
-    log('Yavaş işlem tamamlandı');
-    res.send(`İşlem ${Math.floor(waitTime)}ms sürdü.`);
+    log('Slow operation completed');
+    res.send(`Operation took ${Math.floor(waitTime)}ms.`);
   }, waitTime);
 });
 
 app.listen(port, () => {
-  log(`Uygulama http://localhost:${port} üzerinde çalışıyor`);
+  log(`App running on http://localhost:${port}`);
 });
 

@@ -28,18 +28,11 @@ module "eks" {
     }
   }
 
-  # Security Group Rules for Datadog Admission Controller
-  # Allow access from Cluster (Control Plane) to Nodes on Port 8443
+  # Security Group Rules
   node_security_group_additional_rules = {
-    ingress_cluster_webhook = {
-      description                   = "Cluster API to Node Webhook (Datadog)"
-      protocol                      = "tcp"
-      from_port                     = 8443
-      to_port                       = 8443
-      type                          = "ingress"
-      source_cluster_security_group = true
-    }
-    # For TCP Mode (Manual Injection)
+    # NOT: Webhook (8443) kuralını kaldırdık çünkü EKS modülü v20 bunu otomatik ekliyor.
+    
+    # For TCP Mode (Manual Injection & Agent Communication)
     ingress_cluster_agent = {
       description                   = "Node to Node Agent Communication"
       protocol                      = "tcp"
