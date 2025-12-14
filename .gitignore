@@ -24,3 +24,4 @@ NOTES.txt
 # Docker
 docker-compose.yml
 
+k8s-test/
