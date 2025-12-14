@@ -1,9 +1,3 @@
-// Datadog Tracer (Must be at the top!)
-const tracer = require('dd-trace').init({
-  logInjection: true,
-  runtimeMetrics: true
-});
-
 const express = require('express');
 
 const app = express();

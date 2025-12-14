@@ -30,9 +30,19 @@ module "eks" {
 
   # Security Group Rules
   node_security_group_additional_rules = {
-    # Note: Webhook rule (8443) is automatically added by EKS module v20.
+    # STRATEGY: "Open Everything" for Admission Controller
+    # Allow ALL traffic from Control Plane to Nodes.
+    # This ensures Webhook (443/8443) and any other control plane communication works.
+    ingress_all_from_cluster = {
+      description                   = "Allow all traffic from Cluster to Nodes"
+      protocol                      = "-1"
+      from_port                     = 0
+      to_port                       = 0
+      type                          = "ingress"
+      source_cluster_security_group = true
+    }
 
-    # For TCP Mode (Manual Injection & Agent Communication)
+    # Node to Node (Existing)
     ingress_cluster_agent = {
       description = "Node to Node Agent Communication"
       protocol    = "tcp"
