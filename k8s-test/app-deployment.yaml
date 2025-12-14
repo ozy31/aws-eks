@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+  namespace: dxhero
+  labels:
+    app: nodejs-app
+    tags.datadoghq.com/env: "sandbox"
+    tags.datadoghq.com/service: "dxhero-node-app"
+    tags.datadoghq.com/version: "1.0.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+        tags.datadoghq.com/env: "sandbox"
+        tags.datadoghq.com/service: "dxhero-node-app"
+        tags.datadoghq.com/version: "1.0.0"
+        admission.datadoghq.com/enabled: "true"
+      annotations:
+        admission.datadoghq.com/js-lib.version: "latest"
+    spec:
+      containers:
+      - name: nodejs-app
+        image: 715841344657.dkr.ecr.eu-central-1.amazonaws.com/dxhero-node-app:v5
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DD_ENV
+          value: "sandbox"
+        - name: DD_SERVICE
+          value: "dxhero-node-app-sunday"
+        - name: DD_VERSION
+          value: "1.0.0"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-app
+  namespace: dxhero
+spec:
+  selector:
+    app: nodejs-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer

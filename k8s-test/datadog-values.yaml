@@ -1,0 +1,34 @@
+datadog:
+  # SECURE CONFIGURATION: Reading API Key from Kubernetes Secret
+  apiKeyExistingSecret: datadog-secret
+  
+  site: datadoghq.eu
+
+  apm:
+    # Disable Socket, enable TCP port as we use Service mode
+    portEnabled: true
+    socketEnabled: false
+
+  dogstatsd:
+    # Similar logic for DogStatsD
+    useSocketVolume: false
+    
+  logs:
+    enabled: true
+    containerCollectAll: true
+
+  processAgent:
+    enabled: true
+
+clusterAgent:
+  enabled: true
+  replicas: 2
+  admissionController:
+    enabled: true
+    mutateUnlabelled: false # Inject only into pods with annotation
+    failurePolicy: Ignore
+    agentCommunicationMode: service # Use Service DNS instead of Socket
+
+agents:
+  enabled: true
+  useHostNetwork: true # To access Node IP
